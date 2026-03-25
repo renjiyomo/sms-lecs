@@ -134,7 +134,7 @@ if (file_exists($flagPath)) {
         <img src="image/very slow logo1.gif" alt="School Logo" class="logo-left">
         <div class="title-text">
           <h1>Welcome to</h1>
-          <p>Online Student Grading System</p>
+          <p>Student Management System</p>
         </div>
       </div>
     </div>

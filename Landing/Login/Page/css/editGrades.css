@@ -8,6 +8,8 @@
     --card-light: #ffffff;
     --hover-light: #f3f4f6;
     --hover-dark: #475569;
+    --border-light: #d1d5db;
+    --border-dark: #475569;
     --border-color: #d1d5db;
     --not-applicable-light: #e0d7f9; /* Light pastel purple */
     --not-applicable-dark: #a996ca;  /* Darker purple for dark mode */

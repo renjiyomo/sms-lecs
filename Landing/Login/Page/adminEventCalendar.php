@@ -35,7 +35,6 @@ $teacher_id = intval($_SESSION['teacher_id']);
         <h1>Event Calendar</h1>
         <div class="controls">
           <input type="date" id="filterDate">
-          <button onclick="goToToday()">Today</button>
         </div>
       </div>
 
