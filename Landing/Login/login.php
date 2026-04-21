@@ -7,126 +7,132 @@ $in_cooldown = false;
 $remaining_time = 0;
 
 if (isset($_SESSION['cooldown_start'])) {
-    $elapsed = time() - $_SESSION['cooldown_start'];
-    if ($elapsed < 60) {
-        $in_cooldown = true;
-        $remaining_time = 60 - $elapsed;
-        $error = "Too many failed attempts. Please wait <span id='countdown'>$remaining_time</span> seconds before trying again.";
-    } else {
-        unset($_SESSION['cooldown_start']);
-        if (isset($_SESSION['login_attempts'])) unset($_SESSION['login_attempts']);
-    }
+  $elapsed = time() - $_SESSION['cooldown_start'];
+  if ($elapsed < 60) {
+    $in_cooldown = true;
+    $remaining_time = 60 - $elapsed;
+    $error = "Too many failed attempts. Please wait <span id='countdown'>$remaining_time</span> seconds before trying again.";
+  } else {
+    unset($_SESSION['cooldown_start']);
+    if (isset($_SESSION['login_attempts'])) unset($_SESSION['login_attempts']);
+  }
 }
 
 if (isset($_SESSION['teacher_id'])) {
-    if (!empty($_SESSION['user_type']) && $_SESSION['user_type'] === 'a') {
-        header("Location: /lecs/Landing/Login/Page/adminDashboard.php"); exit;
-    } else {
-        header("Location: /lecs/Landing/Login/Page/teacherDashboard.php"); exit;
-    }
+  if (!empty($_SESSION['user_type']) && $_SESSION['user_type'] === 'a') {
+    header("Location: /lecs/Landing/Login/Page/adminDashboard.php");
+    exit;
+  } else {
+    header("Location: /lecs/Landing/Login/Page/teacherDashboard.php");
+    exit;
+  }
 }
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!$in_cooldown) {
-        $email = trim($_POST['email'] ?? '');
-        $password = trim($_POST['password'] ?? '');
-        $email_prefill = $email;
-        if ($email === '' || $password === '') {
-            $error = "Please fill in both fields.";
-        } else {
-            $stmt = $conn->prepare("SELECT teacher_id, CONCAT(first_name, ' ', COALESCE(middle_name, ''), ' ', last_name) AS full_name, email, password, user_type, user_status FROM teachers WHERE email = ? LIMIT 1");
-            if ($stmt) {
-                $stmt->bind_param("s", $email);
-                $stmt->execute();
-                $res = $stmt->get_result();
-              // user status dito
-                if ($row = $res->fetch_assoc()) {
-                    if ($row['user_status'] !== 'a') {
-                        $error = "Your account is not active. Please contact the administrator.";
-                        if (!isset($_SESSION['login_attempts'])) $_SESSION['login_attempts'] = 0;
-                        $_SESSION['login_attempts']++;
-                        if ($_SESSION['login_attempts'] >= 3) {
-                            $_SESSION['cooldown_start'] = time();
-                        }
-                    } else {
-                        $storedHash = $row['password'] ?? '';
-                        $hashLen = strlen($storedHash);
-                        if ($hashLen < 60) {
-                            $error = "Password verification issue—contact admin.";
-                            if (!isset($_SESSION['login_attempts'])) $_SESSION['login_attempts'] = 0;
-                            $_SESSION['login_attempts']++;
-                            if ($_SESSION['login_attempts'] >= 3) {
-                                $_SESSION['cooldown_start'] = time();
-                            }
-                        } else {
-                            if (password_verify($password, $storedHash)) {
-                                if (password_needs_rehash($storedHash, PASSWORD_DEFAULT)) {
-                                    $newHash = password_hash($password, PASSWORD_DEFAULT);
-                                    $upd = $conn->prepare("UPDATE teachers SET password = ? WHERE teacher_id = ?");
-                                    if ($upd) {
-                                        $upd->bind_param("si", $newHash, $row['teacher_id']);
-                                        $upd->execute();
-                                        $upd->close();
-                                    }
-                                }
-                                if (isset($_SESSION['login_attempts'])) unset($_SESSION['login_attempts']);
-                                if (isset($_SESSION['cooldown_start'])) unset($_SESSION['cooldown_start']);
-                                session_regenerate_id(true);
-                                $_SESSION['teacher_id'] = $row['teacher_id'];
-                                $_SESSION['full_name'] = $row['full_name'];
-                                $_SESSION['user_type'] = $row['user_type'];
-                                if ($row['user_type'] === 'a') {
-                                    header("Location: /lecs/Landing/Login/Page/adminDashboard.php"); exit;
-                                } else {
-                                    header("Location: /lecs/Landing/Login/Page/teacherDashboard.php"); exit;
-                                }
-                            } else {
-                                $error = "Invalid password.";
-                                if (!isset($_SESSION['login_attempts'])) $_SESSION['login_attempts'] = 0;
-                                $_SESSION['login_attempts']++;
-                                if ($_SESSION['login_attempts'] >= 3) {
-                                    $_SESSION['cooldown_start'] = time();
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    $error = "No account found with that email.";
-                    if (!isset($_SESSION['login_attempts'])) $_SESSION['login_attempts'] = 0;
-                    $_SESSION['login_attempts']++;
-                    if ($_SESSION['login_attempts'] >= 3) {
-                        $_SESSION['cooldown_start'] = time();
-                    }
-                }
-                $stmt->close();
-            } else {
-                $error = "Database error. Please try again.";
+  if (!$in_cooldown) {
+    $email = trim($_POST['email'] ?? '');
+    $password = trim($_POST['password'] ?? '');
+    $email_prefill = $email;
+    if ($email === '' || $password === '') {
+      $error = "Please fill in both fields.";
+    } else {
+      $stmt = $conn->prepare("SELECT teacher_id, CONCAT(first_name, ' ', COALESCE(middle_name, ''), ' ', last_name) AS full_name, email, password, user_type, user_status FROM teachers WHERE email = ? LIMIT 1");
+      if ($stmt) {
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        // user status dito
+        if ($row = $res->fetch_assoc()) {
+          if ($row['user_status'] !== 'a') {
+            $error = "Your account is not active. Please contact the administrator.";
+            if (!isset($_SESSION['login_attempts'])) $_SESSION['login_attempts'] = 0;
+            $_SESSION['login_attempts']++;
+            if ($_SESSION['login_attempts'] >= 3) {
+              $_SESSION['cooldown_start'] = time();
             }
+          } else {
+            $storedHash = $row['password'] ?? '';
+            $hashLen = strlen($storedHash);
+            if ($hashLen < 60) {
+              $error = "Password verification issue—contact admin.";
+              if (!isset($_SESSION['login_attempts'])) $_SESSION['login_attempts'] = 0;
+              $_SESSION['login_attempts']++;
+              if ($_SESSION['login_attempts'] >= 3) {
+                $_SESSION['cooldown_start'] = time();
+              }
+            } else {
+              if (password_verify($password, $storedHash)) {
+                if (password_needs_rehash($storedHash, PASSWORD_DEFAULT)) {
+                  $newHash = password_hash($password, PASSWORD_DEFAULT);
+                  $upd = $conn->prepare("UPDATE teachers SET password = ? WHERE teacher_id = ?");
+                  if ($upd) {
+                    $upd->bind_param("si", $newHash, $row['teacher_id']);
+                    $upd->execute();
+                    $upd->close();
+                  }
+                }
+                if (isset($_SESSION['login_attempts'])) unset($_SESSION['login_attempts']);
+                if (isset($_SESSION['cooldown_start'])) unset($_SESSION['cooldown_start']);
+                session_regenerate_id(true);
+                $_SESSION['teacher_id'] = $row['teacher_id'];
+                $_SESSION['full_name'] = $row['full_name'];
+                $_SESSION['user_type'] = $row['user_type'];
+                if ($row['user_type'] === 'a') {
+                  header("Location: /lecs/Landing/Login/Page/adminDashboard.php");
+                  exit;
+                } else {
+                  header("Location: /lecs/Landing/Login/Page/teacherDashboard.php");
+                  exit;
+                }
+              } else {
+                $error = "Invalid password.";
+                if (!isset($_SESSION['login_attempts'])) $_SESSION['login_attempts'] = 0;
+                $_SESSION['login_attempts']++;
+                if ($_SESSION['login_attempts'] >= 3) {
+                  $_SESSION['cooldown_start'] = time();
+                }
+              }
+            }
+          }
+        } else {
+          $error = "No account found with that email.";
+          if (!isset($_SESSION['login_attempts'])) $_SESSION['login_attempts'] = 0;
+          $_SESSION['login_attempts']++;
+          if ($_SESSION['login_attempts'] >= 3) {
+            $_SESSION['cooldown_start'] = time();
+          }
         }
+        $stmt->close();
+      } else {
+        $error = "Database error. Please try again.";
+      }
     }
+  }
 }
 $flagPath = 'image/Flag1.png';
 $flagBase64 = '';
 if (file_exists($flagPath)) {
-    $flagImage = file_get_contents($flagPath);
-    $flagBase64 = 'data:image/png;base64,' . base64_encode($flagImage);
+  $flagImage = file_get_contents($flagPath);
+  $flagBase64 = 'data:image/png;base64,' . base64_encode($flagImage);
 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | LECS Online Student Grading System</title>
-    <link rel="icon" href="image/lecs-logo no bg1.png" type="image/x-icon">
-    <style>
-      .login-left {
-        background: url('<?php echo htmlspecialchars($flagBase64); ?>') center/cover no-repeat !important;
-        }
-    </style>
-    <link rel="stylesheet" href="login.css">
-    <link rel="stylesheet" href="css/all.min.css">
-    <?php include 'theme-script.php'; ?>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | LECS Online Student Grading System</title>
+  <link rel="icon" href="image/lecs-logo no bg1.png" type="image/x-icon">
+  <style>
+    .login-left {
+      background: url('<?php echo htmlspecialchars($flagBase64); ?>') center/cover no-repeat !important;
+    }
+  </style>
+  <link rel="stylesheet" href="login.css">
+  <link rel="stylesheet" href="css/all.min.css">
+  <?php include 'theme-script.php'; ?>
 </head>
+
 <body>
   <div class="login-container">
     <div class="login-left">
@@ -190,38 +196,39 @@ if (file_exists($flagPath)) {
       <button class="closeBtn">Close</button>
     </div>
   </div>
-<div id="loading-screen">
-  <img src="image/lecs-logo no bg.png" alt="Loading Logo" class="loading-logo">
-</div>
-<script>
-  window.addEventListener("load", () => {
-    const loader = document.getElementById("loading-screen");
-    setTimeout(() => loader.classList.add("fade-out"), 500);
-  });
-</script>
-<script>
-  (function() {
-    const savedMode = localStorage.getItem('theme') ||
-      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    document.documentElement.classList.add(savedMode);
-  })();
-</script>
+  <div id="loading-screen">
+    <img src="image/lecs-logo no bg.png" alt="Loading Logo" class="loading-logo">
+  </div>
+  <script>
+    window.addEventListener("load", () => {
+      const loader = document.getElementById("loading-screen");
+      setTimeout(() => loader.classList.add("fade-out"), 500);
+    });
+  </script>
+  <script>
+    (function() {
+      const savedMode = localStorage.getItem('theme') ||
+        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.classList.add(savedMode);
+    })();
+  </script>
   <script>
     const darkBtn = document.getElementById("darkModeBtn");
     const lightBtn = document.getElementById("lightModeBtn");
+
     function setMode(mode) {
-        document.documentElement.classList.remove("light", "dark");
-        document.documentElement.classList.add(mode);
-        darkBtn.style.display = mode === "dark" ? "none" : "inline-block";
-        lightBtn.style.display = mode === "light" ? "none" : "inline-block";
-        localStorage.setItem('theme', mode);
+      document.documentElement.classList.remove("light", "dark");
+      document.documentElement.classList.add(mode);
+      darkBtn.style.display = mode === "dark" ? "none" : "inline-block";
+      lightBtn.style.display = mode === "light" ? "none" : "inline-block";
+      localStorage.setItem('theme', mode);
     }
     darkBtn.onclick = () => setMode("dark");
     lightBtn.onclick = () => setMode("light");
     document.addEventListener('DOMContentLoaded', () => {
-        const savedMode = localStorage.getItem('theme') ||
-                         (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-        setMode(savedMode);
+      const savedMode = localStorage.getItem('theme') ||
+        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      setMode(savedMode);
     });
     const helpBtn = document.getElementById("helpBtn");
     const forgotBtn = document.getElementById("forgotBtn");
@@ -229,7 +236,10 @@ if (file_exists($flagPath)) {
     const forgotModal = document.getElementById("forgotModal");
     const closeBtns = document.querySelectorAll(".closeBtn");
     if (helpBtn) helpBtn.onclick = () => helpModal.style.display = "flex";
-    if (forgotBtn) forgotBtn.onclick = (e) => { e.preventDefault(); forgotModal.style.display = "flex"; };
+    if (forgotBtn) forgotBtn.onclick = (e) => {
+      e.preventDefault();
+      forgotModal.style.display = "flex";
+    };
     closeBtns.forEach(btn => {
       btn.onclick = () => {
         helpModal.style.display = "none";
@@ -258,21 +268,22 @@ if (file_exists($flagPath)) {
     }
   </script>
   <?php if ($in_cooldown): ?>
-  <script>
-    let countdown = <?php echo $remaining_time; ?>;
-    const countdownSpan = document.getElementById('countdown');
-    const submitBtn = document.querySelector('.btn');
-    const errorPara = document.querySelector('p[style*="color:red"]');
-    const interval = setInterval(() => {
-      countdown--;
-      if (countdownSpan) countdownSpan.textContent = countdown;
-      if (countdown <= 0) {
-        clearInterval(interval);
-        if (submitBtn) submitBtn.disabled = false;
-        if (errorPara) errorPara.style.display = 'none';
-      }
-    }, 1000);
-  </script>
+    <script>
+      let countdown = <?php echo $remaining_time; ?>;
+      const countdownSpan = document.getElementById('countdown');
+      const submitBtn = document.querySelector('.btn');
+      const errorPara = document.querySelector('p[style*="color:red"]');
+      const interval = setInterval(() => {
+        countdown--;
+        if (countdownSpan) countdownSpan.textContent = countdown;
+        if (countdown <= 0) {
+          clearInterval(interval);
+          if (submitBtn) submitBtn.disabled = false;
+          if (errorPara) errorPara.style.display = 'none';
+        }
+      }, 1000);
+    </script>
   <?php endif; ?>
 </body>
+
 </html>
