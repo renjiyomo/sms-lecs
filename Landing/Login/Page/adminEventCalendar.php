@@ -1,10 +1,10 @@
-<?php include 'lecs_db.php'; 
+<?php include 'lecs_db.php';
 session_start();
 
 // Restrict access to teachers only
 if (!isset($_SESSION['teacher_id']) || $_SESSION['user_type'] !== 'a') {
-    header("Location: /lecs/Landing/Login/login.php");
-    exit;
+  header("Location: /lecs/Landing/Login/login.php");
+  exit;
 }
 
 $teacher_id = intval($_SESSION['teacher_id']);
@@ -12,6 +12,7 @@ $teacher_id = intval($_SESSION['teacher_id']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,6 +22,7 @@ $teacher_id = intval($_SESSION['teacher_id']);
   <link rel="stylesheet" href="css/eventCalendar.css">
   <?php include 'theme-script.php'; ?>
 </head>
+
 <body>
   <div class="container">
     <?php include 'sidebar.php'; ?>
@@ -72,13 +74,15 @@ $teacher_id = intval($_SESSION['teacher_id']);
   <script>
     // Mobile sidebar functions
     function openSidebar() {
-        document.querySelector('.sidebar').classList.add('open');
-        document.querySelector('.overlay').classList.add('show');
+      document.querySelector('.sidebar').classList.add('open');
+      document.querySelector('.overlay').classList.add('show');
     }
+
     function closeSidebar() {
-        document.querySelector('.sidebar').classList.remove('open');
-        document.querySelector('.overlay').classList.remove('show');
+      document.querySelector('.sidebar').classList.remove('open');
+      document.querySelector('.overlay').classList.remove('show');
     }
   </script>
 </body>
+
 </html>

@@ -11,9 +11,12 @@
     --border-light: #d1d5db;
     --border-dark: #475569;
     --border-color: #d1d5db;
-    --not-applicable-light: #e0d7f9; /* Light pastel purple */
-    --not-applicable-dark: #a996ca;  /* Darker purple for dark mode */
-    --not-applicable-border: #8b5cf6; /* Vibrant purple border */
+    --not-applicable-light: #e0d7f9;
+    /* Light pastel purple */
+    --not-applicable-dark: #a996ca;
+    /* Darker purple for dark mode */
+    --not-applicable-border: #8b5cf6;
+    /* Vibrant purple border */
 }
 
 body {
@@ -44,6 +47,7 @@ body {
     cursor: pointer;
     transition: color 0.3s;
 }
+
 .main-content h1 .back-arrow:hover {
     color: var(--primary-hover);
 }
@@ -112,15 +116,19 @@ td {
     padding: 12px;
     border-bottom: 1px solid var(--border);
 }
+
 :root.light td {
     background-color: #ffffff;
 }
+
 :root.dark td {
     background-color: #1f2937;
 }
+
 :root.light tr:nth-child(even) td {
     background-color: #f9fafb;
 }
+
 :root.dark tr:nth-child(even) td {
     background-color: #111827;
 }
@@ -141,10 +149,12 @@ input[type="number"] {
     background-color: var(--card-light);
     border-color: var(--border-light);
 }
+
 :root.dark input[type="number"] {
     background-color: var(--card-dark);
     border-color: var(--border-dark);
 }
+
 input[type="number"]:focus {
     outline: none;
     border-color: var(--primary-color);
@@ -159,7 +169,7 @@ input[type="number"]:focus {
     margin: 15px 0;
 }
 
-.save-btn { 
+.save-btn {
     display: inline-block;
     padding: 10px 26px;
     border: none;
@@ -200,7 +210,7 @@ input[type="number"]:focus {
     background-color: black;
     border: 5px solid var(--border);
     color: var(--text-color);
-    
+
 }
 
 :root.light .grade-box.not-applicable {
@@ -210,6 +220,7 @@ input[type="number"]:focus {
     opacity: 0.9;
     min-width: 70px;
 }
+
 :root.dark .grade-box.not-applicable {
     background-color: var(--not-applicable-dark);
     color: var(--text-dark);
@@ -226,7 +237,8 @@ input[type="number"]:focus {
 
 .button-group {
     display: flex;
-    gap: 8px; /* Minimal gap between buttons for a tight, professional look */
+    gap: 8px;
+    /* Minimal gap between buttons for a tight, professional look */
 }
 
 .sy-selection {
@@ -239,24 +251,29 @@ input[type="number"]:focus {
     cursor: pointer;
     transition: background-color 0.3s, border-color 0.3s;
 }
+
 :root.light .sy-selection {
     background-color: var(--card-light);
     border-color: var(--border-light);
 }
+
 :root.light .sy-selection:hover {
     background-color: var(--hover-light);
     border-color: var(--primary-color);
 }
+
 :root.dark .sy-selection {
     background-color: var(--card-dark);
     border-color: var(--border-dark);
 }
+
 :root.dark .sy-selection:hover {
     background-color: var(--hover-dark);
     border-color: var(--primary-color);
 }
 
-.import-btn, .export-btn {
+.import-btn,
+.export-btn {
     padding: 8px 20px;
     border: none;
     border-radius: 6px;
@@ -264,12 +281,13 @@ input[type="number"]:focus {
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 
 .import-btn {
-    background-color: #3b82f6; /* Blue for professionalism */
+    background-color: #3b82f6;
+    /* Blue for professionalism */
     color: #ffffff;
     padding: 10px 20px;
     border: none;
@@ -305,13 +323,13 @@ input[type="number"]:focus {
 
 .export-btn:hover {
     background: linear-gradient(135deg, #15803d, #166534);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     transform: translateY(-1px);
 }
 
 .export-btn:active {
     transform: translateY(0);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 :root.dark .export-btn {
@@ -322,15 +340,17 @@ input[type="number"]:focus {
 .modal {
     display: none;
     position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.5);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
     justify-content: center;
     align-items: center;
     z-index: 9999;
     animation: fadeIn 0.25s ease-in-out;
 }
-        
+
 .modal-content {
     background-color: var(--card-light);
     padding: 30px 25px;
@@ -340,22 +360,24 @@ input[type="number"]:focus {
     text-align: center;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
     transition: all 0.3s ease;
 }
-        
+
 .modal-content h2 {
     margin-top: 0;
 }
 
-:root.dark .modal-content { background-color: var(--card-dark); }
+:root.dark .modal-content {
+    background-color: var(--card-dark);
+}
 
 .modal-content h2 {
     font-size: 22px;
     font-weight: 700;
 
 }
-        
+
 .import-form input[type="file"] {
     padding: 10px 14px;
     border-radius: 8px;
@@ -392,7 +414,7 @@ input[type="number"]:focus {
 :root.dark .custom-file-upload:hover {
     background-color: #5f6f85;
 }
-        
+
 .modal-content .btn {
     padding: 10px 20px;
     margin: 5px;
@@ -401,12 +423,12 @@ input[type="number"]:focus {
     border-radius: 5px;
     cursor: pointer;
 }
-        
+
 .modal-content .btn-primary {
     background: linear-gradient(135deg, #4a90e2, #357ABD);
     color: #fff;
 }
-        
+
 .modal-content .btn-secondary {
     background-color: #e5e7eb;
     color: #111827;
@@ -421,22 +443,22 @@ input[type="number"]:focus {
     cursor: pointer;
     margin-left: 10px;
 }
-        
+
 .export-btn:hover {
     background-color: #F57C00;
 }
-        
+
 .success-message {
     color: green;
     margin-bottom: 15px;
 }
-        
+
 .error-message {
     color: red;
     margin-bottom: 15px;
 }
 
-    /* New styles for loading state */
+/* New styles for loading state */
 button.loading {
     opacity: 0.7;
     cursor: not-allowed;
@@ -456,7 +478,9 @@ button.loading {
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .mobile-header {
@@ -472,9 +496,11 @@ button.loading {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: background-color 0.3s;
 }
+
 :root.dark .mobile-header {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
+
 .mobile-burger {
     background: none;
     border: none;
@@ -483,51 +509,60 @@ button.loading {
     color: var(--text-color);
     transition: color 0.3s;
 }
+
 .mobile-header h2 {
     margin: 0 auto;
     font-size: 18px;
 }
+
 @media (max-width: 768px) {
     .mobile-header {
         display: flex;
     }
+
     .main-content {
         margin-left: 0;
         padding: 70px 20px 20px;
     }
+
     h1 {
         display: none;
     }
+
     .top-row {
         flex-direction: column;
         align-items: stretch;
         gap: 10px;
     }
-    .import-btn{
+
+    .import-btn {
         text-align: center;
         margin-bottom: 10px;
         align-items: center;
     }
+
     .sy-selection {
         width: 100%;
     }
-    
+
     .button-group {
         display: block;
     }
 
-    .button-group button{
+    .button-group button {
         width: 100%;
         margin-left: 0;
         text-align: center;
     }
-    
+
     table {
-        background-color: var(--background-color);       
+        background-color: var(--background-color);
     }
+
     thead {
         display: none;
     }
+
     tbody tr {
         width: 100%;
         display: block;
@@ -539,6 +574,7 @@ button.loading {
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         box-sizing: border-box;
     }
+
     td {
         display: flex;
         justify-content: space-between;
@@ -547,18 +583,23 @@ button.loading {
         border-bottom: 1px solid var(--border);
         text-align: right;
     }
+
     :root.light td {
-    background-color: #ffffff;
+        background-color: #ffffff;
     }
+
     :root.dark td {
         background-color: var(--background-dark);
     }
+
     :root.light tr:nth-child(even) td {
         background-color: #ffffff;
     }
+
     :root.dark tr:nth-child(even) td {
         background-color: var(--background-dark);
     }
+
     td:before {
         content: attr(data-th) ": ";
         font-weight: bold;
@@ -567,25 +608,31 @@ button.loading {
         flex: 1;
         text-align: left;
     }
+
     td:last-child {
         border-bottom: none;
     }
+
     .grade-box {
         min-width: auto;
         padding: 0 8px;
     }
+
     :root.dark tbody tr {
-        box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     }
+
     :root.dark table tbody tr {
         background-color: var(--background-dark);
         border-color: #334155;
     }
 
-    :root.dark table{
+    :root.dark table {
         background-color: var(--background-dark);
     }
-    th, td {
+
+    th,
+    td {
         font-size: 12px;
         padding: 8px 5px;
     }
@@ -595,9 +642,10 @@ button.loading {
     .main-content {
         padding: 70px 10px 10px;
     }
-    .import-btn{
+
+    .import-btn {
         text-align: center;
         margin-bottom: 10px;
     }
-    
+
 }
