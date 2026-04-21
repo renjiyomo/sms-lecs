@@ -1,5 +1,7 @@
 <?php
 include 'lecs_db.php';
+/** @var mysqli $conn */
+
 session_start();
 if (!isset($_SESSION['teacher_id']) || $_SESSION['user_type'] !== 'a') {
     header("Location: /lecs/Landing/Login/login.php");
@@ -160,560 +162,495 @@ $dropoutRatesPerYearJson = json_encode($dropoutRatesMap, JSON_NUMERIC_CHECK);
 </head>
 
 <body>
-    <div class="container">
-        <?php include 'sidebar.php'; ?>
-        <div class="overlay" onclick="closeSidebar()"></div>
-        <div class="main-content">
-            <div class="mobile-header">
-                <button class="mobile-burger" onclick="openSidebar()">&#9776;</button>
-                <h2>Admin Dashboard</h2>
+<div class="container">
+    <?php include 'sidebar.php'; ?>
+    <div class="overlay" onclick="closeSidebar()"></div>
+    <div class="main-content">
+        <div class="mobile-header">
+            <button class="mobile-burger" onclick="openSidebar()">&#9776;</button>
+            <h2>Admin Dashboard</h2>
+        </div>
+        <h1>Admin Dashboard</h1>
+        <p>Welcome back, <?php echo htmlspecialchars($teacherName); ?>!</p>
+        <div class="stats">
+            <div class="card orange">
+                <h3><?php echo $studentCount; ?></h3>
+                <p>Pupils</p>
             </div>
-            <h1>Admin Dashboard</h1>
-            <p>Welcome back, <?php echo htmlspecialchars($teacherName); ?>!</p>
-            <div class="stats">
-                <div class="card orange">
-                    <h3><?php echo $studentCount; ?></h3>
-                    <p>Pupils</p>
-                </div>
-                <div class="card purple">
-                    <h3><?php echo $teacherCount; ?></h3>
-                    <p>Teaching Personnel</p>
-                </div>
-                <div class="card blue">
-                    <h3><?php echo $nonTeachingCount; ?></h3>
-                    <p>Non-teaching Personnel</p>
-                </div>
+            <div class="card purple">
+                <h3><?php echo $teacherCount; ?></h3>
+                <p>Teaching Personnel</p>
             </div>
-            <div class="charts">
-                <div class="chart-container enrolled-chart">
-                    <h3>Enrolled Pupils Per Year</h3>
-                    <div class="filter-container">
-                        <select id="enrollmentFromYearFilter">
-                            <option value="">From</option>
-                            <?php foreach ($allYears as $year): ?>
-                                <option value="<?php echo htmlspecialchars($year); ?>"><?php echo htmlspecialchars($year); ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                        <select id="enrollmentToYearFilter">
-                            <option value="">To</option>
-                            <?php foreach ($allYears as $year): ?>
-                                <option value="<?php echo htmlspecialchars($year); ?>"><?php echo htmlspecialchars($year); ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="download-container">
-                        <select class="download-select">
-                            <option value="">Download...</option>
-                            <option value="png">PNG</option>
-                            <option value="jpeg">JPG</option>
-                            <option value="svg">SVG</option>
-                        </select>
-                    </div>
-                    <canvas id="enrollmentChart"></canvas>
-                </div>
-                <div class="chart-container gender-chart">
-                    <h3>Sex Distribution</h3>
-                    <div class="filter-container">
-                        <select id="genderFromYearFilter">
-                            <option value="">From</option>
-                            <?php foreach ($allYears as $year): ?>
-                                <option value="<?php echo htmlspecialchars($year); ?>"><?php echo htmlspecialchars($year); ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                        <select id="genderToYearFilter">
-                            <option value="">To</option>
-                            <?php foreach ($allYears as $year): ?>
-                                <option value="<?php echo htmlspecialchars($year); ?>"><?php echo htmlspecialchars($year); ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="download-container">
-                        <select class="download-select">
-                            <option value="">Download...</option>
-                            <option value="png">PNG</option>
-                            <option value="jpeg">JPG</option>
-                            <option value="svg">SVG</option>
-                        </select>
-                    </div>
-                    <div class="small-chart">
-                        <canvas id="genderChart"></canvas>
-                    </div>
-                    <div class="gender-legend">
-                        <span class="female-text">Female: <?php echo $femaleCount; ?></span>
-                        <span class="male-text">Male: <?php echo $maleCount; ?></span>
-                    </div>
-                </div>
+            <div class="card blue">
+                <h3><?php echo $nonTeachingCount; ?></h3>
+                <p>Non-teaching Personnel</p>
             </div>
-            <div class="charts" style="margin-top:18px;">
-                <div class="chart-container transferred-chart">
-                    <h3>Transferred Pupils Per Year</h3>
-                    <div class="filter-container">
-                        <select id="transferFromYearFilter">
-                            <option value="">From</option>
-                            <?php foreach ($allYears as $year): ?>
-                                <option value="<?php echo htmlspecialchars($year); ?>"><?php echo htmlspecialchars($year); ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                        <select id="transferToYearFilter">
-                            <option value="">To</option>
-                            <?php foreach ($allYears as $year): ?>
-                                <option value="<?php echo htmlspecialchars($year); ?>"><?php echo htmlspecialchars($year); ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="download-container">
-                        <select class="download-select">
-                            <option value="">Download...</option>
-                            <option value="png">PNG</option>
-                            <option value="jpeg">JPG</option>
-                            <option value="svg">SVG</option>
-                        </select>
-                    </div>
-                    <canvas id="transferChart"></canvas>
+        </div>
+        <div class="charts">
+            <div class="chart-container enrolled-chart">
+                <h3>Enrolled Pupils Per Year</h3>
+                <div class="filter-container">
+                    <select id="enrollmentFromYearFilter">
+                        <option value="">From</option>
+                        <?php foreach ($allYears as $year): ?>
+                            <option value="<?php echo htmlspecialchars($year); ?>"><?php echo htmlspecialchars($year); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <select id="enrollmentToYearFilter">
+                        <option value="">To</option>
+                        <?php foreach ($allYears as $year): ?>
+                            <option value="<?php echo htmlspecialchars($year); ?>"><?php echo htmlspecialchars($year); ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
-
-                <div class="chart-container dropped-chart">
-                    <h3>Dropout Rate Per Year</h3>
-                    <div class="filter-container">
-                        <select id="droppedFromYearFilter">
-                            <option value="">From</option>
-                            <?php foreach ($allYears as $year): ?>
-                                <option value="<?php echo htmlspecialchars($year); ?>"><?php echo htmlspecialchars($year); ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                        <select id="droppedToYearFilter">
-                            <option value="">To</option>
-                            <?php foreach ($allYears as $year): ?>
-                                <option value="<?php echo htmlspecialchars($year); ?>"><?php echo htmlspecialchars($year); ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="download-container">
-                        <select class="download-select">
-                            <option value="">Download...</option>
-                            <option value="png">PNG</option>
-                            <option value="jpeg">JPG</option>
-                            <option value="svg">SVG</option>
-                        </select>
-                    </div>
-                    <canvas id="droppedChart"></canvas>
+                <div class="download-container">
+                    <select class="download-select">
+                        <option value="">Download...</option>
+                        <option value="png">PNG</option>
+                        <option value="jpeg">JPG</option>
+                        <option value="svg">SVG</option>
+                    </select>
+                </div>
+                <canvas id="enrollmentChart"></canvas>
+            </div>
+            <div class="chart-container gender-chart">
+                <h3>Sex Distribution</h3>
+                <div class="filter-container">
+                    <select id="genderFromYearFilter">
+                        <option value="">From</option>
+                        <?php foreach ($allYears as $year): ?>
+                            <option value="<?php echo htmlspecialchars($year); ?>"><?php echo htmlspecialchars($year); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <select id="genderToYearFilter">
+                        <option value="">To</option>
+                        <?php foreach ($allYears as $year): ?>
+                            <option value="<?php echo htmlspecialchars($year); ?>"><?php echo htmlspecialchars($year); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="download-container">
+                    <select class="download-select">
+                        <option value="">Download...</option>
+                        <option value="png">PNG</option>
+                        <option value="jpeg">JPG</option>
+                        <option value="svg">SVG</option>
+                    </select>
+                </div>
+                <div class="small-chart">
+                    <canvas id="genderChart"></canvas>
+                </div>
+                <div class="gender-legend">
+                    <span class="female-text">Female: <?php echo $femaleCount; ?></span>
+                    <span class="male-text">Male: <?php echo $maleCount; ?></span>
                 </div>
             </div>
         </div>
+        <div class="charts" style="margin-top:18px;">
+            <div class="chart-container transferred-chart">
+                <h3>Transferred Pupils Per Year</h3>
+                <div class="filter-container">
+                    <select id="transferFromYearFilter">
+                        <option value="">From</option>
+                        <?php foreach ($allYears as $year): ?>
+                            <option value="<?php echo htmlspecialchars($year); ?>"><?php echo htmlspecialchars($year); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <select id="transferToYearFilter">
+                        <option value="">To</option>
+                        <?php foreach ($allYears as $year): ?>
+                            <option value="<?php echo htmlspecialchars($year); ?>"><?php echo htmlspecialchars($year); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="download-container">
+                    <select class="download-select">
+                        <option value="">Download...</option>
+                        <option value="png">PNG</option>
+                        <option value="jpeg">JPG</option>
+                        <option value="svg">SVG</option>
+                    </select>
+                </div>
+                <canvas id="transferChart"></canvas>
+            </div>
+           
+            <div class="chart-container dropped-chart">
+                <h3>Dropout Rate Per Year</h3>
+                <div class="filter-container">
+                    <select id="droppedFromYearFilter">
+                        <option value="">From</option>
+                        <?php foreach ($allYears as $year): ?>
+                            <option value="<?php echo htmlspecialchars($year); ?>"><?php echo htmlspecialchars($year); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <select id="droppedToYearFilter">
+                        <option value="">To</option>
+                        <?php foreach ($allYears as $year): ?>
+                            <option value="<?php echo htmlspecialchars($year); ?>"><?php echo htmlspecialchars($year); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="download-container">
+                    <select class="download-select">
+                        <option value="">Download...</option>
+                        <option value="png">PNG</option>
+                        <option value="jpeg">JPG</option>
+                        <option value="svg">SVG</option>
+                    </select>
+                </div>
+                <canvas id="droppedChart"></canvas>
+            </div>
+        </div>
     </div>
-    <script>
-        // enrollment chart
-        const ctx1 = document.getElementById('enrollmentChart').getContext('2d');
-        const enrollmentChart = new Chart(ctx1, {
-            type: 'bar',
-            data: {
-                labels: <?php echo json_encode($allYears); ?>,
-                datasets: [{
-                    label: 'Enrolled Pupils',
-                    data: <?php echo json_encode($studentsByYear); ?>,
-                    backgroundColor: ['#03DAC5', '#BB86FC'],
-                    borderRadius: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
+</div>
+
+<script>
+    // enrollment chart
+    const ctx1 = document.getElementById('enrollmentChart').getContext('2d');
+    /* global Chart */ const enrollmentChart = new Chart(ctx1, {
+        type: 'bar',
+        data: {
+            labels: <?php echo json_encode($allYears); ?>,
+            datasets: [{
+                label: 'Enrolled Pupils',
+                data: <?php echo json_encode($studentsByYear); ?>,
+                backgroundColor: ['#03DAC5', '#BB86FC'],
+                borderRadius: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: {
+                    title: { display: true, text: 'School Year' },
+                    ticks: { callback: function(value, index, values) { return this.getLabelForValue(value); } }
                 },
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'School Year'
-                        },
-                        ticks: {
-                            callback: function(value, index, values) {
-                                return this.getLabelForValue(value);
-                            }
+                y: {
+                    title: { display: true, text: 'Total Pupils' },
+                    beginAtZero: true,
+                    ticks: { precision: 0 }
+                }
+            },
+            barPercentage: 1.0,
+            categoryPercentage: 1.0,
+            layout: {
+                padding: {
+                    right: 20
+                }
+            }
+        }
+    });
+    // gender chart
+    const ctx2 = document.getElementById('genderChart').getContext('2d');
+    const allGenders = { male: <?php echo (int)$maleCount; ?>, female: <?php echo (int)$femaleCount; ?> };
+    const genderPerYear = <?php echo json_encode($genderPerYear, JSON_NUMERIC_CHECK); ?>;
+    /* global Chart */ const genderChart = new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+            labels: ['Male', 'Female'],
+            datasets: [{
+                data: [allGenders.male, allGenders.female],
+                backgroundColor: ['#03DAC5', '#BB86FC'],
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '70%',
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = Number(context.raw) || 0;
+                            const dataset = context.chart.data.datasets[0].data.map(Number);
+                            const total = dataset.reduce((acc, v) => acc + v, 0);
+                            const percentage = total ? ((value / total) * 100).toFixed(0) : 0;
+                            return `${label}: ${value} (${percentage}%)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+    // dropped chart
+    const ctx3 = document.getElementById('droppedChart').getContext('2d');
+    const dropoutRatesPerYear = <?php echo $dropoutRatesPerYearJson; ?>;
+    /* global Chart */const droppedChart = new Chart(ctx3, {
+        type: 'bar',
+        data: {
+            labels: <?php echo json_encode($allYears); ?>,
+            datasets: [{
+                label: 'Dropout Rate (%)',
+                data: <?php echo json_encode($dropoutRatesByYear); ?>,
+                backgroundColor: ['#EF4444', '#F87171', '#FCA5A5'],
+                borderRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: {
+                    title: { display: true, text: 'School Year' },
+                    ticks: { callback: function(value, index, values) { return this.getLabelForValue(value); } }
+                },
+                y: {
+                    title: { display: true, text: 'Rate (%)' },
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 2,
+                        callback: function(value) {
+                            return value.toFixed(2) + '%';
                         }
                     },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Total Pupils'
-                        },
-                        beginAtZero: true,
-                        ticks: {
-                            precision: 0
-                        }
-                    }
-                },
-                barPercentage: 1.0,
-                categoryPercentage: 1.0,
-                layout: {
-                    padding: {
-                        right: 20
-                    }
+                    max: 100
                 }
-            }
-        });
-        // gender chart
-        const ctx2 = document.getElementById('genderChart').getContext('2d');
-        const allGenders = {
-            male: <?php echo (int)$maleCount; ?>,
-            female: <?php echo (int)$femaleCount; ?>
-        };
-        const genderPerYear = <?php echo json_encode($genderPerYear, JSON_NUMERIC_CHECK); ?>;
-        const genderChart = new Chart(ctx2, {
-            type: 'doughnut',
-            data: {
-                labels: ['Male', 'Female'],
-                datasets: [{
-                    data: [allGenders.male, allGenders.female],
-                    backgroundColor: ['#03DAC5', '#BB86FC'],
-                }]
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                cutout: '70%',
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                const label = context.label || '';
-                                const value = Number(context.raw) || 0;
-                                const dataset = context.chart.data.datasets[0].data.map(Number);
-                                const total = dataset.reduce((acc, v) => acc + v, 0);
-                                const percentage = total ? ((value / total) * 100).toFixed(0) : 0;
-                                return `${label}: ${value} (${percentage}%)`;
-                            }
-                        }
-                    }
+            barPercentage: 1.0,
+            categoryPercentage: 1.0,
+            layout: {
+                padding: {
+                    right: 20
                 }
             }
-        });
-        // dropped chart
-        const ctx3 = document.getElementById('droppedChart').getContext('2d');
-        const dropoutRatesPerYear = <?php echo $dropoutRatesPerYearJson; ?>;
-        const droppedChart = new Chart(ctx3, {
-            type: 'bar',
-            data: {
-                labels: <?php echo json_encode($allYears); ?>,
-                datasets: [{
-                    label: 'Dropout Rate (%)',
-                    data: <?php echo json_encode($dropoutRatesByYear); ?>,
-                    backgroundColor: ['#EF4444', '#F87171', '#FCA5A5'],
-                    borderRadius: 6
-                }]
+        }
+    });
+    // transfer chart
+    const ctx4 = document.getElementById('transferChart').getContext('2d');
+    const transferPerYear = <?php echo json_encode($transferPerYear, JSON_NUMERIC_CHECK); ?>;
+    /* global Chart */ const transferChart = new Chart(ctx4, {
+        type: 'bar',
+        data: {
+            labels: <?php echo json_encode($allYears); ?>,
+            datasets: [{
+                label: 'Transfer In',
+                data: <?php echo json_encode($transferInByYear); ?>,
+                backgroundColor: '#03DAC5',
+                borderRadius: 2
+            }, {
+                label: 'Transfer Out',
+                data: <?php echo json_encode($transferOutByYear); ?>,
+                backgroundColor: '#BB86FC',
+                borderRadius: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: true, position: 'bottom' } },
+            scales: {
+                x: {
+                    title: { display: true, text: 'School Year' },
+                    ticks: { callback: function(value, index, values) { return this.getLabelForValue(value); } }
+                },
+                y: {
+                    title: { display: true, text: 'Total Pupils' },
+                    beginAtZero: true,
+                    ticks: { precision: 0 }
+                }
             },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'School Year'
-                        },
-                        ticks: {
-                            callback: function(value, index, values) {
-                                return this.getLabelForValue(value);
-                            }
-                        }
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Rate (%)'
-                        },
-                        beginAtZero: true,
-                        ticks: {
-                            precision: 2,
-                            callback: function(value) {
-                                return value.toFixed(2) + '%';
-                            }
-                        },
-                        max: 100
-                    }
-                },
-                barPercentage: 1.0,
-                categoryPercentage: 1.0,
-                layout: {
-                    padding: {
-                        right: 20
-                    }
+            barPercentage: 1,
+            categoryPercentage: 0.8,
+            layout: {
+                padding: {
+                    right: 20
                 }
             }
-        });
-        // transfer chart
-        const ctx4 = document.getElementById('transferChart').getContext('2d');
-        const transferPerYear = <?php echo json_encode($transferPerYear, JSON_NUMERIC_CHECK); ?>;
-        const transferChart = new Chart(ctx4, {
-            type: 'bar',
-            data: {
-                labels: <?php echo json_encode($allYears); ?>,
-                datasets: [{
-                    label: 'Transfer In',
-                    data: <?php echo json_encode($transferInByYear); ?>,
-                    backgroundColor: '#03DAC5',
-                    borderRadius: 2
-                }, {
-                    label: 'Transfer Out',
-                    data: <?php echo json_encode($transferOutByYear); ?>,
-                    backgroundColor: '#BB86FC',
-                    borderRadius: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'bottom'
-                    }
-                },
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'School Year'
-                        },
-                        ticks: {
-                            callback: function(value, index, values) {
-                                return this.getLabelForValue(value);
-                            }
-                        }
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Total Pupils'
-                        },
-                        beginAtZero: true,
-                        ticks: {
-                            precision: 0
-                        }
-                    }
-                },
-                barPercentage: 1,
-                categoryPercentage: 0.8,
-                layout: {
-                    padding: {
-                        right: 20
-                    }
-                }
+        }
+    });
+    function updateChartsTheme() {
+        const isDark = document.documentElement.classList.contains('dark');
+        const textColor = isDark ? '#f1f5f9' : '#1f2937'; // Match --text-dark and --text-light
+        const gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+        const tooltipBg = isDark ? 'rgba(0,0,0,0.8)' : 'rgba(255,255,255,0.8)';
+        // Enrollment Chart
+        enrollmentChart.options.scales.x.ticks.color = textColor;
+        enrollmentChart.options.scales.x.title.color = textColor;
+        enrollmentChart.options.scales.x.grid.color = gridColor;
+        enrollmentChart.options.scales.y.ticks.color = textColor;
+        enrollmentChart.options.scales.y.title.color = textColor;
+        enrollmentChart.options.scales.y.grid.color = gridColor;
+        enrollmentChart.options.plugins.tooltip.backgroundColor = tooltipBg;
+        enrollmentChart.options.plugins.tooltip.titleColor = textColor;
+        enrollmentChart.options.plugins.tooltip.bodyColor = textColor;
+        enrollmentChart.update();
+        // Gender Chart
+        genderChart.options.plugins.tooltip.backgroundColor = tooltipBg;
+        genderChart.options.plugins.tooltip.titleColor = textColor;
+        genderChart.options.plugins.tooltip.bodyColor = textColor;
+        genderChart.update();
+        // Dropped Chart
+        droppedChart.options.scales.x.ticks.color = textColor;
+        droppedChart.options.scales.x.title.color = textColor;
+        droppedChart.options.scales.x.grid.color = gridColor;
+        droppedChart.options.scales.y.ticks.color = textColor;
+        droppedChart.options.scales.y.title.color = textColor;
+        droppedChart.options.scales.y.grid.color = gridColor;
+        droppedChart.options.plugins.tooltip.backgroundColor = tooltipBg;
+        droppedChart.options.plugins.tooltip.titleColor = textColor;
+        droppedChart.options.plugins.tooltip.bodyColor = textColor;
+        droppedChart.update();
+        // Transfer Chart
+        transferChart.options.scales.x.ticks.color = textColor;
+        transferChart.options.scales.x.title.color = textColor;
+        transferChart.options.scales.x.grid.color = gridColor;
+        transferChart.options.scales.y.ticks.color = textColor;
+        transferChart.options.scales.y.title.color = textColor;
+        transferChart.options.scales.y.grid.color = gridColor;
+        transferChart.options.plugins.legend.labels.color = textColor;
+        transferChart.options.plugins.tooltip.backgroundColor = tooltipBg;
+        transferChart.options.plugins.tooltip.titleColor = textColor;
+        transferChart.options.plugins.tooltip.bodyColor = textColor;
+        transferChart.update();
+    }
+    
+    updateChartsTheme();
+    /* global Chart */ const observer = new MutationObserver(updateChartsTheme);
+    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    function getFilteredYears(fromId, toId) {
+        const fromYear = document.getElementById(fromId).value;
+        const toYear = document.getElementById(toId).value;
+        let filteredYears = <?php echo json_encode($allYears); ?>;
+        if (fromYear && toYear) {
+            const fromIndex = filteredYears.indexOf(fromYear);
+            const toIndex = filteredYears.indexOf(toYear);
+            if (fromIndex !== -1 && toIndex !== -1 && fromIndex <= toIndex) {
+                filteredYears = filteredYears.slice(fromIndex, toIndex + 1);
             }
-        });
-
-        function updateChartsTheme() {
-            const isDark = document.documentElement.classList.contains('dark');
-            const textColor = isDark ? '#f1f5f9' : '#1f2937'; // Match --text-dark and --text-light
-            const gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
-            const tooltipBg = isDark ? 'rgba(0,0,0,0.8)' : 'rgba(255,255,255,0.8)';
-            // Enrollment Chart
-            enrollmentChart.options.scales.x.ticks.color = textColor;
-            enrollmentChart.options.scales.x.title.color = textColor;
-            enrollmentChart.options.scales.x.grid.color = gridColor;
-            enrollmentChart.options.scales.y.ticks.color = textColor;
-            enrollmentChart.options.scales.y.title.color = textColor;
-            enrollmentChart.options.scales.y.grid.color = gridColor;
-            enrollmentChart.options.plugins.tooltip.backgroundColor = tooltipBg;
-            enrollmentChart.options.plugins.tooltip.titleColor = textColor;
-            enrollmentChart.options.plugins.tooltip.bodyColor = textColor;
-            enrollmentChart.update();
-            // Gender Chart
-            genderChart.options.plugins.tooltip.backgroundColor = tooltipBg;
-            genderChart.options.plugins.tooltip.titleColor = textColor;
-            genderChart.options.plugins.tooltip.bodyColor = textColor;
-            genderChart.update();
-            // Dropped Chart
-            droppedChart.options.scales.x.ticks.color = textColor;
-            droppedChart.options.scales.x.title.color = textColor;
-            droppedChart.options.scales.x.grid.color = gridColor;
-            droppedChart.options.scales.y.ticks.color = textColor;
-            droppedChart.options.scales.y.title.color = textColor;
-            droppedChart.options.scales.y.grid.color = gridColor;
-            droppedChart.options.plugins.tooltip.backgroundColor = tooltipBg;
-            droppedChart.options.plugins.tooltip.titleColor = textColor;
-            droppedChart.options.plugins.tooltip.bodyColor = textColor;
-            droppedChart.update();
-            // Transfer Chart
-            transferChart.options.scales.x.ticks.color = textColor;
-            transferChart.options.scales.x.title.color = textColor;
-            transferChart.options.scales.x.grid.color = gridColor;
-            transferChart.options.scales.y.ticks.color = textColor;
-            transferChart.options.scales.y.title.color = textColor;
-            transferChart.options.scales.y.grid.color = gridColor;
-            transferChart.options.plugins.legend.labels.color = textColor;
-            transferChart.options.plugins.tooltip.backgroundColor = tooltipBg;
-            transferChart.options.plugins.tooltip.titleColor = textColor;
-            transferChart.options.plugins.tooltip.bodyColor = textColor;
-            transferChart.update();
-        }
-
-        updateChartsTheme();
-        const observer = new MutationObserver(updateChartsTheme);
-        observer.observe(document.body, {
-            attributes: true,
-            attributeFilter: ['class']
-        });
-
-        function getFilteredYears(fromId, toId) {
-            const fromYear = document.getElementById(fromId).value;
-            const toYear = document.getElementById(toId).value;
-            let filteredYears = <?php echo json_encode($allYears); ?>;
-            if (fromYear && toYear) {
-                const fromIndex = filteredYears.indexOf(fromYear);
-                const toIndex = filteredYears.indexOf(toYear);
-                if (fromIndex !== -1 && toIndex !== -1 && fromIndex <= toIndex) {
-                    filteredYears = filteredYears.slice(fromIndex, toIndex + 1);
-                }
-            } else if (fromYear) {
-                const fromIndex = filteredYears.indexOf(fromYear);
-                if (fromIndex !== -1) {
-                    filteredYears = filteredYears.slice(fromIndex);
-                }
-            } else if (toYear) {
-                const toIndex = filteredYears.indexOf(toYear);
-                if (toIndex !== -1) {
-                    filteredYears = filteredYears.slice(0, toIndex + 1);
-                }
+        } else if (fromYear) {
+            const fromIndex = filteredYears.indexOf(fromYear);
+            if (fromIndex !== -1) {
+                filteredYears = filteredYears.slice(fromIndex);
             }
-            return filteredYears;
+        } else if (toYear) {
+            const toIndex = filteredYears.indexOf(toYear);
+            if (toIndex !== -1) {
+                filteredYears = filteredYears.slice(0, toIndex + 1);
+            }
         }
-
-        function updateEnrollmentChart() {
-            const filteredYears = getFilteredYears('enrollmentFromYearFilter', 'enrollmentToYearFilter');
-            const allYearsArray = <?php echo json_encode($allYears); ?>;
-            const allData = <?php echo json_encode($studentsByYear); ?>;
-            const filteredData = [];
-            filteredYears.forEach(year => {
-                const index = allYearsArray.indexOf(year);
-                filteredData.push(allData[index] || 0);
-            });
-            enrollmentChart.data.labels = filteredYears;
-            enrollmentChart.data.datasets[0].data = filteredData;
-            enrollmentChart.update();
-        }
-
-        function updateGenderChart() {
-            const filteredYears = getFilteredYears('genderFromYearFilter', 'genderToYearFilter');
-            let male = 0,
-                female = 0;
-            filteredYears.forEach(year => {
-                const data = genderPerYear[year] || {
-                    male: 0,
-                    female: 0
-                };
-                male += Number(data.male) || 0;
-                female += Number(data.female) || 0;
-            });
-            genderChart.data.datasets[0].data = [male, female];
-            genderChart.update();
-            document.querySelector('.female-text').textContent = `Female: ${female}`;
-            document.querySelector('.male-text').textContent = `Male: ${male}`;
-        }
-
-        function updateTransferChart() {
-            const filteredYears = getFilteredYears('transferFromYearFilter', 'transferToYearFilter');
-            const allYearsArray = <?php echo json_encode($allYears); ?>;
-            const allInData = <?php echo json_encode($transferInByYear); ?>;
-            const allOutData = <?php echo json_encode($transferOutByYear); ?>;
-            const filteredIn = [];
-            const filteredOut = [];
-            filteredYears.forEach(year => {
-                const index = allYearsArray.indexOf(year);
-                filteredIn.push(allInData[index] || 0);
-                filteredOut.push(allOutData[index] || 0);
-            });
-            transferChart.data.labels = filteredYears;
-            transferChart.data.datasets[0].data = filteredIn;
-            transferChart.data.datasets[1].data = filteredOut;
-            transferChart.update();
-        }
-
-        function updateDroppedChart() {
-            const filteredYears = getFilteredYears('droppedFromYearFilter', 'droppedToYearFilter');
-            const allYearsArray = <?php echo json_encode($allYears); ?>;
-            const allData = <?php echo json_encode($dropoutRatesByYear); ?>;
-            const filteredData = [];
-            filteredYears.forEach(year => {
-                const index = allYearsArray.indexOf(year);
-                filteredData.push(allData[index] || 0);
-            });
-            droppedChart.data.labels = filteredYears;
-            droppedChart.data.datasets[0].data = filteredData;
-            droppedChart.update();
-        }
-        // Enrollment listeners
-        document.getElementById('enrollmentFromYearFilter').addEventListener('change', updateEnrollmentChart);
-        document.getElementById('enrollmentToYearFilter').addEventListener('change', updateEnrollmentChart);
-        // Gender listeners
-        document.getElementById('genderFromYearFilter').addEventListener('change', updateGenderChart);
-        document.getElementById('genderToYearFilter').addEventListener('change', updateGenderChart);
-        // Transfer listeners
-        document.getElementById('transferFromYearFilter').addEventListener('change', updateTransferChart);
-        document.getElementById('transferToYearFilter').addEventListener('change', updateTransferChart);
-        // Dropped listeners
-        document.getElementById('droppedFromYearFilter').addEventListener('change', updateDroppedChart);
-        document.getElementById('droppedToYearFilter').addEventListener('change', updateDroppedChart);
-        // Initial updates
-        updateEnrollmentChart();
-        updateGenderChart();
-        updateTransferChart();
-        updateDroppedChart();
-        // Download functionality
-        document.querySelectorAll('.download-select').forEach(select => {
-            select.addEventListener('change', () => {
-                const format = select.value;
-                if (!format) return;
-                const container = select.closest('.chart-container');
-                const containerClass = Array.from(container.classList).find(cls => cls.endsWith('-chart'));
-                const ext = format === 'jpeg' ? 'jpg' : format;
-                const options = {
-                    filter: function(node) {
-                        if (node.classList) {
-                            return !node.classList.contains('filter-container') && !node.classList.contains('download-container');
-                        }
-                        return true;
+        return filteredYears;
+    }
+    function updateEnrollmentChart() {
+        const filteredYears = getFilteredYears('enrollmentFromYearFilter', 'enrollmentToYearFilter');
+        const allYearsArray = <?php echo json_encode($allYears); ?>;
+        const allData = <?php echo json_encode($studentsByYear); ?>;
+        const filteredData = [];
+        filteredYears.forEach(year => {
+            const index = allYearsArray.indexOf(year);
+            filteredData.push(allData[index] || 0);
+        });
+        enrollmentChart.data.labels = filteredYears;
+        enrollmentChart.data.datasets[0].data = filteredData;
+        enrollmentChart.update();
+    }
+    function updateGenderChart() {
+        const filteredYears = getFilteredYears('genderFromYearFilter', 'genderToYearFilter');
+        let male = 0, female = 0;
+        filteredYears.forEach(year => {
+            const data = genderPerYear[year] || { male: 0, female: 0 };
+            male += Number(data.male) || 0;
+            female += Number(data.female) || 0;
+        });
+        genderChart.data.datasets[0].data = [male, female];
+        genderChart.update();
+        document.querySelector('.female-text').textContent = `Female: ${female}`;
+        document.querySelector('.male-text').textContent = `Male: ${male}`;
+    }
+    function updateTransferChart() {
+        const filteredYears = getFilteredYears('transferFromYearFilter', 'transferToYearFilter');
+        const allYearsArray = <?php echo json_encode($allYears); ?>;
+        const allInData = <?php echo json_encode($transferInByYear); ?>;
+        const allOutData = <?php echo json_encode($transferOutByYear); ?>;
+        const filteredIn = [];
+        const filteredOut = [];
+        filteredYears.forEach(year => {
+            const index = allYearsArray.indexOf(year);
+            filteredIn.push(allInData[index] || 0);
+            filteredOut.push(allOutData[index] || 0);
+        });
+        transferChart.data.labels = filteredYears;
+        transferChart.data.datasets[0].data = filteredIn;
+        transferChart.data.datasets[1].data = filteredOut;
+        transferChart.update();
+    }
+    function updateDroppedChart() {
+        const filteredYears = getFilteredYears('droppedFromYearFilter', 'droppedToYearFilter');
+        const allYearsArray = <?php echo json_encode($allYears); ?>;
+        const allData = <?php echo json_encode($dropoutRatesByYear); ?>;
+        const filteredData = [];
+        filteredYears.forEach(year => {
+            const index = allYearsArray.indexOf(year);
+            filteredData.push(allData[index] || 0);
+        });
+        droppedChart.data.labels = filteredYears;
+        droppedChart.data.datasets[0].data = filteredData;
+        droppedChart.update();
+    }
+    // Enrollment listeners
+    document.getElementById('enrollmentFromYearFilter').addEventListener('change', updateEnrollmentChart);
+    document.getElementById('enrollmentToYearFilter').addEventListener('change', updateEnrollmentChart);
+    // Gender listeners
+    document.getElementById('genderFromYearFilter').addEventListener('change', updateGenderChart);
+    document.getElementById('genderToYearFilter').addEventListener('change', updateGenderChart);
+    // Transfer listeners
+    document.getElementById('transferFromYearFilter').addEventListener('change', updateTransferChart);
+    document.getElementById('transferToYearFilter').addEventListener('change', updateTransferChart);
+    // Dropped listeners
+    document.getElementById('droppedFromYearFilter').addEventListener('change', updateDroppedChart);
+    document.getElementById('droppedToYearFilter').addEventListener('change', updateDroppedChart);
+    // Initial updates
+    updateEnrollmentChart();
+    updateGenderChart();
+    updateTransferChart();
+    updateDroppedChart();
+    // Download functionality
+    document.querySelectorAll('.download-select').forEach(select => {
+        select.addEventListener('change', () => {
+            const format = select.value;
+            if (!format) return;
+            const container = select.closest('.chart-container');
+            const containerClass = Array.from(container.classList).find(cls => cls.endsWith('-chart'));
+            const ext = format === 'jpeg' ? 'jpg' : format;
+            const options = {
+                filter: function(node) {
+                    if (node.classList) {
+                        return !node.classList.contains('filter-container') && !node.classList.contains('download-container');
                     }
-                };
-                let toFunc;
-                if (format === 'png') {
-                    toFunc = domtoimage.toPng;
-                } else if (format === 'jpeg') {
-                    toFunc = domtoimage.toJpeg;
-                } else if (format === 'svg') {
-                    toFunc = domtoimage.toSvg;
+                    return true;
                 }
-                toFunc(container, options).then(dataUrl => {
-                    const a = document.createElement('a');
-                    a.href = dataUrl;
-                    a.download = `${containerClass}.${ext}`;
-                    a.click();
-                    select.value = '';
-                }).catch(err => {
-                    console.error('Error generating image:', err);
-                    select.value = '';
-                });
+            };
+            let toFunc;
+            if (format === 'png') {
+                toFunc = domtoimage.toPng;
+            } else if (format === 'jpeg') {
+                toFunc = domtoimage.toJpeg;
+            } else if (format === 'svg') {
+                toFunc = domtoimage.toSvg;
+            }
+            toFunc(container, options).then(dataUrl => {
+                const a = document.createElement('a');
+                a.href = dataUrl;
+                a.download = `${containerClass}.${ext}`;
+                a.click();
+                select.value = '';
+            }).catch(err => {
+                console.error('Error generating image:', err);
+                select.value = '';
             });
         });
-        // Mobile sidebar functions
-        function openSidebar() {
-            document.querySelector('.sidebar').classList.add('open');
-            document.querySelector('.overlay').classList.add('show');
-        }
-
-        function closeSidebar() {
-            document.querySelector('.sidebar').classList.remove('open');
-            document.querySelector('.overlay').classList.remove('show');
-        }
-    </script>
+    });
+    // Mobile sidebar functions
+    function openSidebar() {
+        document.querySelector('.sidebar').classList.add('open');
+        document.querySelector('.overlay').classList.add('show');
+    }
+    function closeSidebar() {
+        document.querySelector('.sidebar').classList.remove('open');
+        document.querySelector('.overlay').classList.remove('show');
+    }
+</script>
 </body>
 
 </html>
