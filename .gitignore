@@ -1,0 +1,27 @@
+# Database dumps and exports (contains sensitive data)
+*.sql
+
+# Composer dependencies (should be installed via 'composer install')
+/Landing/Login/Page/vendor/
+
+# User uploads and temporary file directories
+/Landing/Login/Page/uploads/
+/Landing/Login/Page/generated_certificates/
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS-generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
